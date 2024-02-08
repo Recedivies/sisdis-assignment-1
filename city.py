@@ -4,7 +4,8 @@ from node import Order
 from node_socket import UdpSocket
 from util import get_logger
 
-logger = get_logger('main')
+logger = get_logger("main")
+
 
 class City:
 
@@ -12,11 +13,11 @@ class City:
         self.number_general = number_general
         self.my_port = my_port
         self.node_socket = UdpSocket(my_port)
-        self.logger = get_logger('city')
+        self.logger = get_logger("city")
 
-        self.logger.debug(f'city_port: {self.my_port}')
-        self.logger.info(f'City is running...')
-        self.logger.info(f'Number of loyal general: {number_general}')
+        self.logger.debug(f"city_port: {self.my_port}")
+        self.logger.info(f"City is running...")
+        self.logger.info(f"Number of loyal general: {number_general}")
 
     def close_connection(self):
         self.node_socket.close()
@@ -30,13 +31,23 @@ class City:
 
         :return: the conclusion
         """
-        return ''
+        self.logger.info("Listen to incoming messages...")
+
+        # input_value_byte, address = self.node_socket.listen()
+
+        self.logger.info("Concluding what happen...")
+
+        self.logger.info("GENERAL CONSENSUS: XXX")
+
+        return ""
 
 
 def thread_exception_handler(args):
-    logger.error('Uncaught exception', exc_info=(args.exc_type,
-                                                 args.exc_value,
-                                                 args.exc_traceback))
+    logger.error(
+        "Uncaught exception",
+        exc_info=(args.exc_type, args.exc_value, args.exc_traceback),
+    )
+
 
 def main(city_port: int, number_general: int):
     threading.excepthook = thread_exception_handler
@@ -45,7 +56,7 @@ def main(city_port: int, number_general: int):
         return city.start()
 
     except Exception:
-        logger.exception('Caught Error')
+        logger.exception("Caught Error")
         raise
 
     finally:
