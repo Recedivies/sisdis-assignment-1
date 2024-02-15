@@ -111,6 +111,13 @@ class BgpPublicTest(BgpTest):
         expected = [self.loyal_supreme_general.order for i in range(3)]
         self.assertEqual(expected, result)
 
+    def test_supreme_general_should_return_none(self):
+        result = self.loyal_supreme_general.sending_procedure(
+            "general_1", self.loyal_supreme_general.order
+        )
+        expected = None
+        self.assertEqual(expected, result)
+
     def test_supreme_general_send_information_to_city_once(self):
         self.loyal_supreme_general.conclude_action([])
         self.mock_udp.send.assert_called_once()
@@ -189,6 +196,24 @@ class BgpPublicGrader(TestCase):
 
         result = execution([True, True, True, False], "RETREAT")
         expected = "ERROR_LESS_THAN_TWO_GENERALS"
+        self.assertEqual(expected, result)
+
+    def test_all_loyal_retreat_return_retreat(self):
+        result = execution([False, False, False, False], "RETREAT")
+        expected = "RETREAT"
+        self.assertEqual(expected, result)
+
+    def test_all_loyal_attack_return_attack(self):
+        result = execution([False, False, False, False], "ATTACK")
+        expected = "ATTACK"
+        self.assertEqual(expected, result)
+
+    @patch("node.General.get_random_order")
+    def test_supreme_loyal_traitor_retreat_return_retreat(self, mock_random_order):
+        mock_random_order.side_effect = [Order.RETREAT, Order.RETREAT, Order.RETREAT]
+
+        result = execution([True, False, False, False], "ATTACK")
+        expected = "RETREAT"
         self.assertEqual(expected, result)
 
     @patch("node.General.get_random_order")

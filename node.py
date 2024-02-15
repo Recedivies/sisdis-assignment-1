@@ -110,8 +110,8 @@ class General:
             ),
         )
         process_send.start()
+
         process_send.join()
-        # Wait all threads until finished
         for thread in process_listen_threads:
             thread.join()
 
@@ -276,27 +276,28 @@ class SupremeGeneral(General):
         """
         result = []
 
-        for receiver_id in range(1, 4):
-            if self.is_traitor:
-                send_order = self.get_random_order()
-            else:
-                send_order = order
+        if sender == "supreme_general":
+            for receiver_id in range(1, 4):
+                if self.is_traitor:
+                    send_order = self.get_random_order()
+                else:
+                    send_order = order
 
-            receiver_port = self.general_port_dictionary.get(receiver_id)
-            self.logger.info(
-                f"Send message to general {receiver_id} with port {receiver_port}"
-            )
+                receiver_port = self.general_port_dictionary.get(receiver_id)
+                self.logger.info(
+                    f"Send message to general {receiver_id} with port {receiver_port}"
+                )
 
-            message = f"{sender}~order={send_order}"
+                message = f"{sender}~order={send_order}"
 
-            self.node_socket.send(
-                message,
-                receiver_port,
-            )
+                self.node_socket.send(
+                    message,
+                    receiver_port,
+                )
 
-            result.append(send_order)
+                result.append(send_order)
 
-        return result
+        return result or None
 
     def conclude_action(self, orders):
         """
