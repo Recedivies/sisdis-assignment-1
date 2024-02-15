@@ -33,13 +33,42 @@ class City:
         """
         self.logger.info("Listen to incoming messages...")
 
-        # input_value_byte, address = self.node_socket.listen()
+        count_attack = 0
+        count_retreat = 0
+
+        for _ in range(self.number_general):
+            input_value_byte, address = self.node_socket.listen()
+
+            splitted_message = input_value_byte.split("~")
+            sender = splitted_message[0].split("=")[0]
+            order = splitted_message[1].split("=")[1]
+
+            if order == "0":
+                self.logger.info(f"{sender} RETREAT from us!")
+                count_retreat += 1
+
+            if order == "1":
+                self.logger.info(f"{sender} ATTACK us!")
+                count_attack += 1
 
         self.logger.info("Concluding what happen...")
 
-        self.logger.info("GENERAL CONSENSUS: XXX")
+        conclusion = ""
+        if self.number_general <= 1:
+            conclusion = "ERROR_LESS_THAN_TWO_GENERALS"
 
-        return ""
+        elif count_attack == count_retreat:
+            conclusion = "FAILED"
+
+        elif count_attack > count_retreat:
+            conclusion = "ATTACK"
+
+        else:
+            conclusion = "RETREAT"
+
+        self.logger.info(f"GENERAL CONSENSUS: {conclusion}")
+
+        return conclusion
 
 
 def thread_exception_handler(args):
